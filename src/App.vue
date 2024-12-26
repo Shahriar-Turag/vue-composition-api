@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 const name = ref('John doe');
 const status = ref('active');
@@ -40,6 +40,20 @@ const addTask = () => {
 const deleteTask = (id) => {
 	tasks.value = tasks.value.filter((task) => task.id !== id);
 };
+
+onMounted(async () => {
+	try {
+		const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+		const data = await res.json();
+		tasks.value = data.map((task) => ({
+			id: task.id,
+			title: task.title,
+			status: task.completed ? 'completed' : 'pending',
+		}));
+	} catch (error) {
+		console.error('Failed to fetch tasks', error);
+	}
+});
 </script>
 
 <template>
